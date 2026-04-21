@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>STEM Fair Pre-Order</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 50px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, select {
+      width: 95%;
+      padding: 8px;
+      margin: 8px 0;
+    }
+
+    #terms {
+      width: auto;
+    }
+
+    button {
+      padding: 10px;
+      width: 100%;
+      margin-top: 5px;
+      background-color: #f78bb1;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #f78bb1;
+    }
+
+    .error {
+      color: red;
+      margin-bottom: 10px;
+      min-height: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>STEM Fair Product Pre-Order</h2>
+
+  <p>
+   UV-Alert provides an option to other UV straps that is not only efficient,
+    but also eco-friendly. This in turn, helps the general public, as low production 
+    costs from traditional methods of production makes the straps easily accessible 
+    and good for your wallet, and at the same time reduce environmental hazards that 
+    can also harm us.
+  </p>
+
+  <div id="errorMsg" class="error"></div>
+
+  <form onsubmit="return handleOrder()">
+    
+    <label>Customer Name:</label>
+    <input type="text" id="name">
+
+    <label>Product Name:</label>
+    <select id="variant">
+      <option value="">Select</option>
+      <option value="Basic|150">Basic Box (PHP 150)</option>
+      <option value="Advanced |250">Advanced Box(PHP 250)</option>
+      <option value="Premium|350">Premium Box (PHP 350)</option>
+    </select>
+
+    <label>Quantity:</label>
+    <input type="number" id="quantity">
+
+    <label>Pickup Method:</label>
+    <select id="pickup">
+      <option value="">Select</option>
+      <option value="Delivery">Delivery</option>
+      <option value="Meetup">Meetup</option>
+    </select>
+
+    <label>Address (for delivery only):</label>
+    <input type="text" id="address">
+
+    <label>
+      <input type="checkbox" id="terms"> I accept terms
+    </label>
+
+    <button type="button" onclick="loadPreviousOrder()">Load Previous Order</button>
+    <button type="submit">Submit</button>
+
+  </form>
+</div>
+
+<script>
+
+function setCookie(name, value, maxAge){
+document.cookie = name + "=" + value + "; max-age=" + maxAge + "; path=/";
+}
+
+function getCookie(name){
+
+let cookies = document.cookie.split(";");
+
+for(let i=0;i<cookies.length;i++){
+let c = cookies[i].trim();
+
+if(c.indexOf(name + "=") == 0){
+return c.substring(name.length+1);
+}
+}
+
+return "";
+
+}
+
+function deleteCookie(name){
+document.cookie = name + "=; max-age=0; path=/";
+}
+
+function handleOrder(){
+
+document.getElementById("errorMsg").innerHTML = "";
+
+let name = document.getElementById("name").value;
+let variant = document.getElementById("variant").value;
+let quantity = document.getElementById("quantity").value;
+let pickup = document.getElementById("pickup").value;
+let address = document.getElementById("address").value;
+let terms = document.getElementById("terms").checked;
+
+let errors = [];
+
+if(name == "") errors.push("Customer Name");
+if(variant == "") errors.push("Product");
+if(quantity == "" || quantity <= 0) errors.push("Quantity must be greater than 0");
+if(pickup == "") errors.push("Pickup Method");
+
+if(pickup == "Delivery" && address == ""){
+errors.push("Address required for Delivery");
+}
+
+if(!terms) errors.push("Accept Terms");
+
+if(errors.length > 0){
+
+document.getElementById("errorMsg").innerHTML =
+"Please fix the following:<br>" + errors.join("<br>");
+
+return false;
+
+}
+
+setCookie("customerName", name, 86400);
+
+localStorage.setItem("product", variant);
+localStorage.setItem("quantity", quantity);
+localStorage.setItem("pickup", pickup);
+localStorage.setItem("address", address);
+
+window.location.href = "summary.html";
+
+return false;
+
+}
+
+function loadPreviousOrder(){
+
+let name = getCookie("name");
+let product = localStorage.getItem("product");
+let quantity = localStorage.getItem("quantity");
+let pickup = localStorage.getItem("pickup");
+let address = localStorage.getItem("address");
+
+if(!name && !product){
+document.getElementById("errorMsg").innerHTML = "No previous order data";
+return;
+}
+
+document.getElementById("name").value = name;
+document.getElementById("variant").value = product;
+document.getElementById("quantity").value = quantity;
+document.getElementById("pickup").value = pickup;
+document.getElementById("address").value = address;
+
+}
+
+</script>
+
+</body>
+</html>

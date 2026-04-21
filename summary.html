@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Order Summary</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f4f4;
+}
+
+.container{
+width:500px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:10px;
+margin-top:50px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Order Summary</h2>
+
+<p id="summary"></p>
+
+</div>
+
+<script>
+
+function getCookie(name){
+
+let cookies = document.cookie.split(";");
+
+for(let i=0;i<cookies.length;i++){
+
+let c = cookies[i].trim();
+
+if(c.indexOf(name + "=") == 0){
+return c.substring(name.length+1);
+}
+
+}
+
+return "";
+
+}
+
+let name = getCookie("name");
+let productData = localStorage.getItem("product");
+let quantity = localStorage.getItem("quantity");
+let pickup = localStorage.getItem("pickup");
+let address = localStorage.getItem("address");
+
+let split = productData.split("|");
+let product = split[0];
+let price = split[1];
+
+let total = price * quantity;
+
+let summary = `
+
+Customer Name: ${name} <br><br>
+Product: ${product} <br><br>
+Quantity: ${quantity} <br><br>
+Total Amount: PHP ${total} <br><br>
+Pickup Method: ${pickup} <br><br>
+Address: ${pickup == "Delivery" ? address : "Meetup Location"} <br><br>
+
+<b>Thank you for your preorder!</b>
+
+`;
+
+document.getElementById("summary").innerHTML = summary;
+
+</script>
+
+</body>
+</html>
