@@ -38,14 +38,11 @@
       cursor: pointer;
     }
 
-    button:hover {
-      background-color: #f78bb1;
-    }
-
     .error {
       color: red;
       margin-bottom: 10px;
       min-height: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -56,25 +53,23 @@
   <h2>STEM Fair Product Pre-Order</h2>
 
   <p>
-   UV-Alert provides an option to other UV straps that is not only efficient,
-    but also eco-friendly. This in turn, helps the general public, as low production 
-    costs from traditional methods of production makes the straps easily accessible 
-    and good for your wallet, and at the same time reduce environmental hazards that 
-    can also harm us.
+    UV-Alert provides an option to other UV straps that is not only efficient,
+    but also eco-friendly. This helps the public by making the product affordable
+    while reducing environmental harm caused by traditional production methods.
   </p>
 
   <div id="errorMsg" class="error"></div>
 
   <form onsubmit="return handleOrder()">
-    
+
     <label>Customer Name:</label>
     <input type="text" id="name">
 
     <label>Product Name:</label>
     <select id="variant">
       <option value="">Select</option>
-    <option value="UV-Alert Basic|120">UV-Alert Basic (PHP 5.00)</option>
-    <option value="UV-Alert Premium|250">UV-Alert Premium (PHP 10.00)</option>
+      <option value="UV-Alert Basic|5">UV-Alert Basic (PHP 5.00)</option>
+      <option value="UV-Alert Premium|10">UV-Alert Premium (PHP 10.00)</option>
     </select>
 
     <label>Quantity:</label>
@@ -94,6 +89,8 @@
       <input type="checkbox" id="terms"> I accept terms
     </label>
 
+    <br><br>
+
     <button type="button" onclick="loadPreviousOrder()">Load Previous Order</button>
     <button type="submit">Submit</button>
 
@@ -103,7 +100,7 @@
 <script>
 
 function setCookie(name, value, maxAge){
-document.cookie = name + "=" + value + "; max-age=" + maxAge + "; path=/";
+document.cookie = name + "=" + encodeURIComponent(value) + "; max-age=" + maxAge + "; path=/";
 }
 
 function getCookie(name){
@@ -112,18 +109,11 @@ let cookies = document.cookie.split(";");
 
 for(let i=0;i<cookies.length;i++){
 let c = cookies[i].trim();
-
 if(c.indexOf(name + "=") == 0){
-return c.substring(name.length+1);
+return decodeURIComponent(c.substring(name.length + 1));
 }
 }
-
 return "";
-
-}
-
-function deleteCookie(name){
-document.cookie = name + "=; max-age=0; path=/";
 }
 
 function handleOrder(){
@@ -143,20 +133,13 @@ if(name == "") errors.push("Customer Name");
 if(variant == "") errors.push("Product");
 if(quantity == "" || quantity <= 0) errors.push("Quantity must be greater than 0");
 if(pickup == "") errors.push("Pickup Method");
-
-if(pickup == "Delivery" && address == ""){
-errors.push("Address required for Delivery");
-}
-
+if(pickup == "Delivery" && address == "") errors.push("Address required for Delivery");
 if(!terms) errors.push("Accept Terms");
 
 if(errors.length > 0){
-
 document.getElementById("errorMsg").innerHTML =
-"Please fix the following:<br>" + errors.join("<br>");
-
+"Please fix:<br>" + errors.join("<br>");
 return false;
-
 }
 
 setCookie("customerName", name, 86400);
@@ -169,12 +152,11 @@ localStorage.setItem("address", address);
 window.location.href = "summary.html";
 
 return false;
-
 }
 
 function loadPreviousOrder(){
 
-let name = getCookie("name");
+let name = getCookie("customerName");
 let product = localStorage.getItem("product");
 let quantity = localStorage.getItem("quantity");
 let pickup = localStorage.getItem("pickup");
