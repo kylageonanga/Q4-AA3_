@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Order Summary</title>
+  <title>Order Summary</title>
 
-<style>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #f4f4f4;
+    }
 
-body{
-font-family:Arial;
-background:#f4f4f4;
-}
-
-.container{
-width:500px;
-margin:auto;
-background:white;
-padding:20px;
-border-radius:10px;
-margin-top:50px;
-}
-
-</style>
-
+    .container {
+      width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 50px;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="container">
+  <h2>Order Summary</h2>
 
-<h2>Order Summary</h2>
+  <p>Customer Name: <span id="name"></span></p>
+  <p>Product: <span id="product"></span></p>
+  <p>Quantity: <span id="quantity"></span></p>
+  <p>Total Amount: <span id="total"></span></p>
+  <p>Pickup Method: <span id="pickup"></span></p>
+  <p>Address: <span id="address"></span></p>
 
-<p id="summary"></p>
-
+  <br>
+  <b>Thank you for your order!</b>
 </div>
 
 <script>
@@ -40,20 +43,17 @@ function getCookie(name){
 let cookies = document.cookie.split(";");
 
 for(let i=0;i<cookies.length;i++){
-
 let c = cookies[i].trim();
 
 if(c.indexOf(name + "=") == 0){
-return c.substring(name.length+1);
+return decodeURIComponent(c.substring(name.length + 1));
 }
-
 }
-
 return "";
-
 }
 
-let name = getCookie("name");
+let name = getCookie("customerName");
+
 let productData = localStorage.getItem("product");
 let quantity = localStorage.getItem("quantity");
 let pickup = localStorage.getItem("pickup");
@@ -65,20 +65,12 @@ let price = split[1];
 
 let total = price * quantity;
 
-let summary = `
-
-Customer Name: ${name} <br><br>
-Product: ${product} <br><br>
-Quantity: ${quantity} <br><br>
-Total Amount: PHP ${total} <br><br>
-Pickup Method: ${pickup} <br><br>
-Address: ${pickup == "Delivery" ? address : "Meetup Location"} <br><br>
-
-<b>Thank you for your preorder!</b>
-
-`;
-
-document.getElementById("summary").innerHTML = summary;
+document.getElementById("name").innerText = name;
+document.getElementById("product").innerText = product;
+document.getElementById("quantity").innerText = quantity;
+document.getElementById("total").innerText = "PHP " + total;
+document.getElementById("pickup").innerText = pickup;
+document.getElementById("address").innerText = address;
 
 </script>
 
